@@ -4,6 +4,8 @@ Python script to define class containing basic utility functions
 import traceback
 import os
 from kaggle.api.kaggle_api_extended import KaggleApi
+import yaml
+import datetime
 
 
 class BaseUtil:
@@ -13,14 +15,46 @@ class BaseUtil:
         Function to initialize the class
         """
         self.variables = dict()
+        self.variables['folder_paths'] = [
+            "store",
+            "store/data",
+            "store/model",
+            "store/fine_tuned_model",
+            "store/plots",
+            "logs",
+            "logs/model_pipeline",
+            "logs/utilities",
+            "logs/data_layer"
+        ]
         self.variables["data_store"] = "store/data"
+        self.variables["config_file_path"] = "config.yaml"
+        self.variables["log_file_path"] = "logs/utilities/base_util.log"
+        self.run_adhoc()
+
+    def create_folders(self):
+        """
+        Function to create missing folders
+        :return: status: boolean
+        """
+        stat = False
+        try:
+            for folder_path in self.variables['folder_paths']:
+                if not self.data_exists(folder_path):
+                    os.mkdir(folder_path)
+            stat = True
+
+        except Exception:
+            self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
+                           error_desc=traceback.format_exc())
+
+        return stat
 
     @staticmethod
     def data_exists(file_path):
         """
         Function to check if the data already exists
-        :param file_path:
-        :return:
+        :param file_path: str: filepath to check
+        :return: Status
         """
         return True if os.path.exists(file_path) else False
 
@@ -30,22 +64,64 @@ class BaseUtil:
         :param kwargs: src: str: Source of the data to pulled from
         :param kwargs: data_uri: str: Link of the data to pull from
 
-        :return:
+        :return: status: boolean
         """
         stat = False
         try:
             if kwargs['src'] == 'kaggle':  # function to download data from kaggle
                 file_path = kwargs['data_uri'].split("/")[-1]
                 file_path = self.variables['data_store'] + "/" + file_path
-                print(file_path)
                 if not self.data_exists(file_path):
                     os.mkdir(file_path)
                     api = KaggleApi()
                     api.authenticate()
                     api.dataset_download_files(kwargs['data_uri'], unzip=True, path=file_path)
-                    stat = True
+                stat = True
         except Exception:
-            print(traceback.format_exc())
+            self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
+                           error_desc=traceback.format_exc())
 
         return stat
+
+    def load_config_file(self):
+        """
+        Function to load the config file
+        :return: status: boolean
+        """
+        stat = False
+        try:
+            if os.path.exists(self.variables['config_file_path']):
+                with open(self.variables['config_file_path'], 'r') as f:
+                    self.variables['config'] = yaml.load(f, Loader=yaml.Loader)
+                stat = True
+            else:
+                raise FileNotFoundError
+        except Exception:
+            self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
+                           error_desc=traceback.format_exc())
+
+        return stat
+
+    def run_adhoc(self):
+        """
+        Function to run the adhoc methods
+        :return: None
+        """
+
+        self.load_config_file()
+        self.create_folders()
+
+    @staticmethod
+    def write_log(file_name, log_lvl, error_desc):
+        """
+        Function to write the log
+        :param file_name: str: Name of the file to write
+        :param log_lvl: str: Level of the log DEBUG / ERROR / WARN / CRITICAL
+        :param error_desc: str: Description of the log file
+        :return: None
+        """
+        time_stamp = datetime.datetime.now().strftime("%D %H:%M:%S")
+        with open(file_name, 'a') as f:
+            log_line = "[{}]:[{}]:[{}]".format(time_stamp, log_lvl, error_desc)
+            f.write(log_line + "\n")
 

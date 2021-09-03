@@ -1,4 +1,5 @@
 absl-py @ file:///C:/ci/absl-py_1623867344543/work
+aiofiles==0.7.0
 aiohttp @ file:///C:/ci/aiohttp_1614361212023/work
 asgiref==3.4.1
 astor==0.8.1
@@ -29,9 +30,11 @@ h11==0.12.0
 h5py @ file:///C:/ci/h5py_1622088609188/work
 idna @ file:///tmp/build/80754af9/idna_1622654382723/work
 importlib-metadata @ file:///C:/ci/importlib-metadata_1617877477759/work
+Jinja2==3.0.1
 kaggle==1.5.12
 Keras-Preprocessing @ file:///tmp/build/80754af9/keras-preprocessing_1612283640596/work
 Markdown @ file:///C:/ci/markdown_1614364082838/work
+MarkupSafe==2.0.1
 mkl-fft==1.3.0
 mkl-random @ file:///C:/ci/mkl_random_1626186184308/work
 mkl-service==2.4.0
@@ -50,6 +53,7 @@ pyreadline==2.1
 PySocks @ file:///C:/ci/pysocks_1605307512533/work
 python-dateutil==2.8.2
 python-slugify==5.0.2
+PyYAML==5.4.1
 requests @ file:///tmp/build/80754af9/requests_1629994808627/work
 requests-oauthlib==1.3.0
 rsa @ file:///tmp/build/80754af9/rsa_1614366226499/work
@@ -60,6 +64,7 @@ tensorboard @ file:///home/builder/ktietz/aggregate/tensorflow_recipes/ci_baze37
 tensorboard-plugin-wit==1.6.0
 tensorflow==2.5.0
 tensorflow-estimator @ file:///home/builder/ktietz/aggregate/tensorflow_recipes/ci_baze37/tensorflow-estimator_1622026529081/work/tensorflow_estimator-2.5.0-py2.py3-none-any.whl
+tensorflow-hub==0.12.0
 termcolor==1.1.0
 text-unidecode==1.3
 tqdm==4.62.2
@@ -72,3 +77,4 @@ wincertstore==0.2
 wrapt @ file:///C:/ci/wrapt_1607574570428/work
 yarl @ file:///C:/ci/yarl_1606940155993/work
 zipp @ file:///tmp/build/80754af9/zipp_1625570634446/work
+requests~=2.26.0
