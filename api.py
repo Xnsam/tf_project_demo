@@ -81,7 +81,7 @@ async def model_train(input_dict: ModelTrainAPIInput,
     return response
 
 
-@app.post("/get_train_state")
+@app.get("/get_train_state")
 def get_train_state():
     """
     Function to get the training status
