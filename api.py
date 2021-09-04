@@ -75,8 +75,10 @@ async def model_train(input_dict: ModelTrainAPIInput,
     :param input_dict:
     :return:
     """
+    print(base_obj.variables['data_dir'])
     bg_tasks.add_task(train_obj.run_train_api, model_name=input_dict.model_name,
-                      fine_tune_flag=input_dict.fine_tune_flag, data_dir=base_obj.variables['data_dir'])
+                      fine_tune_flag=input_dict.fine_tune_flag,
+                      data_dir=base_obj.variables['data_dir'])
     response = {"user_msg": "Model training initiated"}
     return response
 
@@ -90,7 +92,7 @@ def get_train_state():
     return {'train_status': train_obj.get_train_status()}
 
 
-@app.post("/get_evaluation_reports")
+@app.get("/get_evaluation_reports")
 def get_evaluation_reports():
     """
     Function to get the get_evaluation_reports

@@ -46,6 +46,8 @@ class CustomTrainApi:
         :return:
         """
         outputs = self.start_train_model(**kwargs)
+        import gc
+        gc.collect()
         reports = self.get_eval_reports(**outputs)
         self.variables['reports'] = reports
         self.variables['train_status'] = True

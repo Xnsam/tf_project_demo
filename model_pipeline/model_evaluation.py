@@ -23,7 +23,6 @@ class ModelEvalPipe:
         """
         loss_, accuracy_ = kwargs['model'].evaluate(kwargs['test_data'],
                                                     batch_size=kwargs['batch_size'],
-                                                    steps=5,
                                                     verbose=1)
         return round(loss_, 4), round(accuracy_, 4)
 

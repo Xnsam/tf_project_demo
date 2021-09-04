@@ -31,7 +31,7 @@ def do_get_request(host_name="http://localhost", port_num="5000", end_point="fet
     return resp_get.status_code, resp_get.content
 
 
-# Sample POST Request for fetch data
+# # Sample POST Request for fetch data
 # print(" POST Request for fetch data ")
 # api_request = {
 #     "src": "kaggle",
@@ -42,23 +42,32 @@ def do_get_request(host_name="http://localhost", port_num="5000", end_point="fet
 #     print(resp)
 # else:
 #     print("Fetch data failed")
-
-# Sample POST Request for model training
-print(" POST Request for model training ")
-api_request = {
-    "model_name": "efficientnetv2-b0",
-    "fine_tune_flag": False
-}
-status, resp = do_post_request(json_dict=api_request, end_point="model_train")
-if status == 200:
-    print(resp)
-else:
-    print("POST Request for model training failed")
-
-# Sample GET Request for model training status
-# print(" GET Request for model training status ")
-# status, resp = do_get_request(end_point="get_train_state")
+#
+# # # Sample POST Request for model training
+# print(" POST Request for model training ")
+# api_request = {
+#     "model_name": "efficientnetv2-b0",
+#     "fine_tune_flag": False
+# }
+# status, resp = do_post_request(json_dict=api_request, end_point="model_train")
 # if status == 200:
 #     print(resp)
 # else:
-#     print("GET Request for model training status")
+#     print("POST Request for model training failed")
+
+# # Sample GET Request for model training status
+print(" GET Request for model training status ")
+status, resp = do_get_request(end_point="get_train_state")
+if status == 200:
+    print(resp)
+else:
+    print("GET Request for model training status")
+
+# # Sample GET Request for evaluation results
+print(" GET Request for evaluation results ")
+status, resp = do_get_request(end_point="get_evaluation_reports")
+if status == 200:
+    print(resp)
+else:
+    print("GET Request for model training status")
+

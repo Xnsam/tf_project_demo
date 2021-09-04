@@ -112,11 +112,6 @@ class BaseUtil:
         :return: None
         """
         time_stamp = datetime.datetime.now().strftime("%D %H:%M:%S")
-        if not os.path.exists(file_name):
-            os.mkdir(file_name)
-        if not os.path.exists(file_name):
-            file_name = '../{}'.format(file_name)
-            os.mkdir(file_name)
         with open(file_name, 'a') as f:
             log_line = "[{}]:[{}]:[{}]".format(time_stamp, log_lvl, error_desc)
             f.write(log_line + "\n")

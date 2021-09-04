@@ -179,9 +179,9 @@ class ModelPipe:
         """
         stat = False
         try:
-            if not os.path.exists('../' + self.variables['model_save_path']):
-                os.mkdir('../' + self.variables['model_save_path'])
-            self.variables['model_path'] = "../" + "{}/fine_tuned_model".format(self.variables['model_save_path'])
+            if not os.path.exists(self.variables['model_save_path']):
+                os.mkdir(self.variables['model_save_path'])
+            self.variables['model_path'] = "{}/fine_tuned_model".format(self.variables['model_save_path'])
             self.variables['model'].save_weights(self.variables['model_path'])
             stat = True
         except Exception:

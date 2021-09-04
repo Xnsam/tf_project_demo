@@ -47,7 +47,7 @@ class DatasetPipe:
         :return: tf.data.Dataset generator
         """
         tmp_data = tf.keras.preprocessing.image_dataset_from_directory(
-            "../" + self.variables['data_dir'],
+            self.variables['data_dir'],
             validation_split=0.20,
             subset=kwargs['dataset_type'],
             label_mode="categorical",
