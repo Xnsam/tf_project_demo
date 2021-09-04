@@ -43,7 +43,8 @@ class ModelEvalPipe:
         :param kwargs:
         :return:
         """
-        results = kwargs['model'].predict(kwargs['test_data'])
+        results = kwargs['model'].predict(kwargs['test_data'],
+                                          batch_size=kwargs['batch_size'])
         y_true = np.argmax(kwargs['y_true'], axis=-1)
         y_prediction = np.argmax(results, axis=-1)
         c_report = classification_report(y_true, y_prediction, output_dict=True)

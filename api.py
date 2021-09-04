@@ -74,7 +74,7 @@ async def model_train(input_dict: ModelTrainAPIInput,
     :param input_dict:
     :return:
     """
-    bg_tasks.add_task(train_obj.start_train_model, model_name=input_dict.model_name,
+    bg_tasks.add_task(train_obj.run_train_api, model_name=input_dict.model_name,
                       fine_tune_flag=input_dict.fine_tune_flag, data_dir=base_obj.variables['data_dir'])
     response = {"user_msg": "Model training initiated"}
     return response
