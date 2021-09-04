@@ -58,7 +58,7 @@ class DatasetPipe:
         self.variables['class_names'] = tuple(tmp_data.class_names)
         self.variables['{}_size'.format(kwargs['dataset_type'])] = tmp_data.cardinality().numpy()
         tmp_data = tmp_data.unbatch().batch(kwargs['batch_size'])
-        tmp_data = tmp_data.repeat()
+        # tmp_data = tmp_data.repeat()
 
         augment_data_flag = False
         if 'augment_data_flag' in kwargs:

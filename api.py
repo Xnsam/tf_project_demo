@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 
 from base.base_util import BaseUtil
-from api_pipeline.api_functions import start_train_model
+from api_pipeline.api_functions import CustomTrainApi
 
 
 variables = dict()
@@ -11,6 +11,7 @@ variables = dict()
 app = FastAPI()
 base_obj = BaseUtil()
 template_obj = Jinja2Templates(directory="templates")
+train_obj = CustomTrainApi()
 
 
 class DataAPIInput(BaseModel):
@@ -73,10 +74,28 @@ async def model_train(input_dict: ModelTrainAPIInput,
     :param input_dict:
     :return:
     """
-    bg_tasks.add_task(start_train_model, model_name=input_dict.model_name,
+    bg_tasks.add_task(train_obj.start_train_model, model_name=input_dict.model_name,
                       fine_tune_flag=input_dict.fine_tune_flag, data_dir=base_obj.variables['data_dir'])
     response = {"user_msg": "Model training initiated"}
     return response
+
+
+@app.post("/get_train_state")
+def get_train_state():
+    """
+    Function to get the training status
+    :return:
+    """
+    return {'train_status': train_obj.get_train_status()}
+
+
+@app.post("/get_evaluation_reports")
+def get_evaluation_reports():
+    """
+    Function to get the get_evaluation_reports
+    :return:
+    """
+    return {'evaluation_reports': train_obj.variables['reports']}
 
 
 @app.post("/model_predict")

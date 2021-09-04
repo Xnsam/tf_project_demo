@@ -2,6 +2,9 @@
 Python Script to evaluate the model
 """
 
+from sklearn.metrics import classification_report
+import numpy as np
+
 
 class ModelEvalPipe:
 
@@ -37,8 +40,11 @@ class ModelEvalPipe:
         :param kwargs:
         :return:
         """
-        classification_report = dict()
-        return classification_report
+        results = kwargs['model'].predict(kwargs['test_data'])
+        y_true = np.argmax(kwargs['y_true'], axis=-1)
+        y_prediction = np.argmax(results, axis=-1)
+        c_report = classification_report(y_true, y_prediction, output_dict=True)
+        return c_report
 
     def run_eval_pipeline(self, **kwargs):
         """
@@ -51,5 +57,5 @@ class ModelEvalPipe:
         report['loss'], report['accuracy'] = self.get_loss_acc(**kwargs)
         report['classification_report'] = self.get_classification_report(**kwargs)
 
-
+        return report
 
