@@ -19,35 +19,27 @@ class BaseUtil:
             "store",
             "store/data",
             "store/model",
-            "store/fine_tuned_model",
             "store/plots",
             "logs",
             "logs/model_pipeline",
             "logs/utilities",
             "logs/data_layer"
         ]
-        self.variables["data_store"] = "store/data"
-        self.variables["config_file_path"] = "config.yaml"
+
+        self.variables["config_file_path_1"] = "../config.yaml"
+        self.variables["config_file_path_2"] = "config.yaml"
         self.variables["log_file_path"] = "logs/utilities/base_util.log"
         self.run_adhoc()
 
     def create_folders(self):
         """
         Function to create missing folders
-        :return: status: boolean
+        :return:
         """
-        stat = False
-        try:
-            for folder_path in self.variables['folder_paths']:
-                if not self.data_exists(folder_path):
-                    os.mkdir(folder_path)
-            stat = True
-
-        except Exception:
-            self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
-                           error_desc=traceback.format_exc())
-
-        return stat
+        for folder_path in self.variables['folder_paths']:
+            if not self.data_exists('../' + folder_path):
+                os.mkdir(folder_path)
+                print('Created ' + folder_path)
 
     @staticmethod
     def data_exists(file_path):
@@ -76,6 +68,7 @@ class BaseUtil:
                     api = KaggleApi()
                     api.authenticate()
                     api.dataset_download_files(kwargs['data_uri'], unzip=True, path=file_path)
+                self.variables['data_dir'] = file_path + '/' + 'Data'
                 stat = True
         except Exception:
             self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
@@ -86,21 +79,16 @@ class BaseUtil:
     def load_config_file(self):
         """
         Function to load the config file
-        :return: status: boolean
+        :return:
         """
-        stat = False
-        try:
-            if os.path.exists(self.variables['config_file_path']):
-                with open(self.variables['config_file_path'], 'r') as f:
-                    self.variables['config'] = yaml.load(f, Loader=yaml.Loader)
-                stat = True
-            else:
-                raise FileNotFoundError
-        except Exception:
-            self.write_log(file_name=self.variables['log_file_path'], log_lvl="ERROR",
-                           error_desc=traceback.format_exc())
-
-        return stat
+        if os.path.exists(self.variables['config_file_path_1']):
+            with open(self.variables['config_file_path_1'], 'r') as f:
+                self.variables['config'] = yaml.load(f, Loader=yaml.Loader)
+        elif os.path.exists(self.variables['config_file_path_2']):
+            with open(self.variables['config_file_path_2'], 'r') as f:
+                self.variables['config'] = yaml.load(f, Loader=yaml.Loader)
+        else:
+            raise FileNotFoundError
 
     def run_adhoc(self):
         """
@@ -121,6 +109,8 @@ class BaseUtil:
         :return: None
         """
         time_stamp = datetime.datetime.now().strftime("%D %H:%M:%S")
+        if not os.path.exists(file_name):
+            file_name = '../{}'.format(file_name)
         with open(file_name, 'a') as f:
             log_line = "[{}]:[{}]:[{}]".format(time_stamp, log_lvl, error_desc)
             f.write(log_line + "\n")

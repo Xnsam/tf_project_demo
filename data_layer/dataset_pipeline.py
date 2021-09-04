@@ -47,16 +47,16 @@ class DatasetPipe:
         :return: tf.data.Dataset generator
         """
         tmp_data = tf.keras.preprocessing.image_dataset_from_directory(
-            self.variables['data_dir'],
+            "../" + self.variables['data_dir'],
             validation_split=0.20,
             subset=kwargs['dataset_type'],
-            label_mode="Categorical",
+            label_mode="categorical",
             seed=123,
             image_size=kwargs['image_size'],
             batch_size=kwargs['batch_size']
         )
         self.variables['class_names'] = tuple(tmp_data.class_names)
-        self.variables['train_size'] = tmp_data.cardinality().numpy()
+        self.variables['{}_size'.format(kwargs['dataset_type'])] = tmp_data.cardinality().numpy()
         tmp_data = tmp_data.unbatch().batch(kwargs['batch_size'])
         tmp_data = tmp_data.repeat()
 
@@ -69,7 +69,7 @@ class DatasetPipe:
 
         return tmp_data
 
-    def run(self, **kwargs):
+    def run_dataset_pipeline(self, **kwargs):
         """
         Function to run the build dataset pipeline
         :param kwargs: image_size:
@@ -80,11 +80,16 @@ class DatasetPipe:
         stat = False
         try:
 
+            # split into training and validation set
             for ds_type in ["training", "validation"]:
                 data = self.get_dataset(dataset_type=ds_type, image_size=kwargs['image_size'],
                                         batch_size=kwargs['batch_size'])
                 self.dataset[ds_type] = data
 
+            # split into validation and test set
+            val_batches = tf.data.experimental.cardinality(self.dataset['validation'])
+            self.dataset['test'] = self.dataset['validation'].take(val_batches // 5)
+            self.dataset['validation'] = self.dataset['validation'].skip(val_batches // 5)
             stat = True
         except Exception:
             self.base_obj.write_log(log_lvl="ERROR", file_name=self.variables['log_file_path'],
