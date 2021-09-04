@@ -21,8 +21,11 @@ class ModelEvalPipe:
         :param kwargs:
         :return:
         """
-        loss_, accuracy_ = kwargs['model'].evaluate(kwargs['test_data'], verbose=0)
-        return loss_, accuracy_
+        loss_, accuracy_ = kwargs['model'].evaluate(kwargs['test_data'],
+                                                    batch_size=kwargs['batch_size'],
+                                                    steps=5,
+                                                    verbose=1)
+        return round(loss_, 4), round(accuracy_, 4)
 
     @staticmethod
     def get_history_plot(**kwargs):

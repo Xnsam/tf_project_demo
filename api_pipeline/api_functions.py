@@ -1,6 +1,7 @@
 """
 Python script for API functions
 """
+import numpy as np
 
 from model_pipeline.model_evaluation import ModelEvalPipe
 from model_pipeline.model_finetune import ModelPipe
@@ -43,11 +44,17 @@ class CustomTrainApi:
             self.eval_pipeline = ModelEvalPipe()
             self.variables['reports'] = self.eval_pipeline.run_eval_pipeline(
                 model=self.model_pipeline.variables['model'],
-                test_data=self.model_pipeline.dataset_obj.dataset['test']
+                test_data=self.model_pipeline.dataset_obj.dataset['test'],
+                y_true=np.concatenate([y for x, y in self.model_pipeline.dataset_obj.dataset['test']], axis=0),
+                batch_size=self.model_pipeline.variables['batch_size']
             )
 
         if self.variables['reports']:
+            print('completed evaluation')
             self.variables['train_status'] = True
+
+        print(self.variables['train_status'])
+        print(self.variables['reports'])
 
 
 train_obj = CustomTrainApi()
