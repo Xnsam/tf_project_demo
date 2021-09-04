@@ -72,11 +72,11 @@ class CustomTrainApi:
         return output
 
 
-train_obj = CustomTrainApi()
-inputs = {
-    'model_name': "efficientnetv2-b0",
-    'fine_tune_flag': False,
-    'data_dir': 'store/data/covid-wwo-pneumonia-chest-xray/Data'
-}
-train_obj.run_train_api(**inputs)
+# train_obj = CustomTrainApi()
+# inputs = {
+#     'model_name': "efficientnetv2-b0",
+#     'fine_tune_flag': False,
+#     'data_dir': 'store/data/covid-wwo-pneumonia-chest-xray/Data'
+# }
+# train_obj.run_train_api(**inputs)
 

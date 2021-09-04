@@ -30,13 +30,13 @@ else:
     print("Fetch data failed")
 
 # Sample POST Request for model training
-print(" POST Request for model training ")
-api_request = {
-    "model_name": "efficientnetv2-b0",
-    "fine_tune_flag": False
-}
-status, resp = do_post_request(json_dict=api_request, end_point="model_train")
-if status == 200:
-    print(resp)
-else:
-    print("Fetch data failed")
+# print(" POST Request for model training ")
+# api_request = {
+#     "model_name": "efficientnetv2-b0",
+#     "fine_tune_flag": False
+# }
+# status, resp = do_post_request(json_dict=api_request, end_point="model_train")
+# if status == 200:
+#     print(resp)
+# else:
+#     print("Fetch data failed")

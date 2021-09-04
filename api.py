@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, BackgroundTasks
+import uvicorn
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 
@@ -106,3 +107,6 @@ def model_predict(input_dict: ModelPredictAPIInput):
     :return:
     """
     pass
+
+
+uvicorn.run(app, host="0.0.0.0", port=5000)
