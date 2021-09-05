@@ -70,6 +70,13 @@ class ModelPredictPipe:
         else:
             layer_name = kwargs['activation_layer_name']
 
+        # from tf_explain.core.grad_cam import GradCAM
+        # explainer = GradCAM()
+        # img_ = tf.keras.preprocessing.image.load_img(output_path, target_size=kwargs['model_img_size'])
+        # img_array_ = tf.keras.preprocessing.image.img_to_array(img_)
+        # tmp_data = ([img_array_], None)
+        # grid = explainer.explain(tmp_data, kwargs['model'], class_index=np.argmax(score))
+
         activations = keract.get_activations(kwargs['model'], predict_data, layer_names=layer_name)
         keract.display_activations(activations, save=True, directory='store/activation_maps/', data_format='channels_last')
 
