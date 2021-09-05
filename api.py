@@ -118,6 +118,7 @@ def model_predict(input_dict: ModelPredictAPIInput):
                          class_names=api_obj.variables['class_names'],
                          activation_layer_name=input_dict.activation_layer_name)
     response = api_obj.prediction
+    response['predicted_score'] = response['predicted_score'].tolist()
     return response
 
 

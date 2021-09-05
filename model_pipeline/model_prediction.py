@@ -62,7 +62,7 @@ class ModelPredictPipe:
 
         outputs = {
             'predicted_label': kwargs['class_names'][np.argmax(score)],
-            'predicted_score': 100 * np.argmax(score)
+            'predicted_score': score
         }
 
         if len(kwargs['activation_layer_name']) == 0:

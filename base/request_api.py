@@ -38,58 +38,58 @@ def do_get_request(host_name="http://localhost", port_num="5000", end_point="fet
 
 
 # # =======================================  Sample POST Request for fetch data
-# print(" POST Request for fetch data ")
-# api_request = {
-#     "src": "kaggle",
-#     "data_uri": "rashikrahmanpritom/covid-wwo-pneumonia-chest-xray",
-# }
-# status, resp = do_post_request(json_dict=api_request)
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("Fetch data failed")
+print(" POST Request for fetch data ")
+api_request = {
+    "src": "kaggle",
+    "data_uri": "rashikrahmanpritom/covid-wwo-pneumonia-chest-xray",
+}
+status, resp = do_post_request(json_dict=api_request)
+if status == 200:
+    pprint.pprint(resp)
+else:
+    print("Fetch data failed")
 
-# sleep_sec = 5
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # # =====================================  Sample POST Request for model training
-# print(" POST Request for model training ")
-# api_request = {
-#     "model_name": "VGG16",
-#     "fine_tune_flag": True,
-#     "fine_tune_lyr": 4
-# }
-# status, resp = do_post_request(json_dict=api_request, end_point="model_train")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("POST Request for model training failed")
+sleep_sec = 5
+print('Waiting {} secs ...'.format(sleep_sec))
+time.sleep(sleep_sec)
+# # =====================================  Sample POST Request for model training
+print(" POST Request for model training ")
+api_request = {
+    "model_name": "VGG16",
+    "fine_tune_flag": False,
+    "fine_tune_lyr": 4
+}
+status, resp = do_post_request(json_dict=api_request, end_point="model_train")
+if status == 200:
+    pprint.pprint(resp)
+else:
+    print("POST Request for model training failed")
 
-# sleep_sec = 180
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # =====================================  Sample GET Request for model training status
-# print(" GET Request for model training status ")
-# status, resp = do_get_request(end_point="get_train_state")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("GET Request for model training status")
+sleep_sec = 180
+print('Waiting {} secs ...'.format(sleep_sec))
+time.sleep(sleep_sec)
+# =====================================  Sample GET Request for model training status
+print(" GET Request for model training status ")
+status, resp = do_get_request(end_point="get_train_state")
+if status == 200:
+    pprint.pprint(resp)
+else:
+    print("GET Request for model training status")
 
-# sleep_sec = 5
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # # =====================================  Sample GET Request for evaluation results
-# print(" GET Request for evaluation results ")
-# status, resp = do_get_request(end_point="get_evaluation_reports")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("GET Request for model training status")
+sleep_sec = 5
+print('Waiting {} secs ...'.format(sleep_sec))
+time.sleep(sleep_sec)
+# # =====================================  Sample GET Request for evaluation results
+print(" GET Request for evaluation results ")
+status, resp = do_get_request(end_point="get_evaluation_reports")
+if status == 200:
+    pprint.pprint(resp)
+else:
+    print("GET Request for model training status")
 
-# sleep_sec = 180
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
+sleep_sec = 180
+print('Waiting {} secs ...'.format(sleep_sec))
+time.sleep(sleep_sec)
 # # # =======================================  Sample POST Request for prediction results
 print(" POST Request for prediction results ")
 api_request = {
