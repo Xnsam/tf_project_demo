@@ -13,19 +13,18 @@ Tasks Completed
 3. Base Code for building data
 4. Base Code for model training
 5. Train, Evaluation pipeline
+6. Prediction pipeline 
+7. Fine tune layers in Train pipeline
 
 TODO
 -
-1. Prediction pipeline 
-2. Final UI
-3. Model deployment on ONNX
-4. fine tune layers pipeline
+1. Final UI
+2. Model deployment on ONNX
 
 Workflows Tested
 - 
 1. Fetch data api
 2. Train, save, load model api
 3. Model evaluate api, fetch status, fetch classification report 
+4. Model prediction api
 
-Bugs
-- 
