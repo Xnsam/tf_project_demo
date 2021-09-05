@@ -6,6 +6,9 @@ from fastapi.templating import Jinja2Templates
 from base.base_util import BaseUtil
 from api_pipeline.api_functions import CustomApi
 
+import warnings
+warnings.filterwarnings("ignore")
+
 
 variables = dict()
 
@@ -27,7 +30,7 @@ class ModelTrainAPIInput(BaseModel):
 
 class ModelPredictAPIInput(BaseModel):
     image_uri: str
-    activation_layer_name: str
+    activation_layer_name: list
 
 
 @app.get("/")
@@ -117,8 +120,10 @@ def model_predict(input_dict: ModelPredictAPIInput):
         'activation_map': api_obj.activation_maps,
         'prediction': api_obj.prediction,
     }
+    import pdb; pdb.set_trace()
     response.update(input_dict.dict())
     return response
 
 
-uvicorn.run(app, host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    uvicorn.run("api:app", host="0.0.0.0", port=5000, reload=True)

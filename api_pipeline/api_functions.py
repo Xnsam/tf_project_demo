@@ -66,12 +66,17 @@ class CustomApi:
         :param kwargs:
         :return:
         """
+        # do predictions
         pred_pipeline = ModelPredictPipe()
+        kwargs.update(self.variables)
         outputs = pred_pipeline.do_prediction(**kwargs)
         self.prediction['predicted_label'] = outputs['predicted_label']
         self.prediction['predicted_score'] = outputs['predicted_score']
+        self.activation_maps = outputs['activation_maps']
+        print('Prediction pipeline complete')
 
-    def start_train_model(self, **kwargs):
+    @staticmethod
+    def start_train_model(**kwargs):
         """
         Function to run the dataset pipeline and run the model training
         :return:

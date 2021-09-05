@@ -46,19 +46,31 @@ class DatasetPipe:
         :param kwargs: batch_size: int: number of samples in the dataset
         :return: tf.data.Dataset generator
         """
-        tmp_data = tf.keras.preprocessing.image_dataset_from_directory(
-            self.variables['data_dir'],
-            validation_split=0.20,
-            subset=kwargs['dataset_type'],
-            label_mode="categorical",
-            seed=123,
-            image_size=kwargs['image_size'],
-            batch_size=kwargs['batch_size']
-        )
+        tmp_data = None
+        if kwargs['dataset_type'] in ["training", "validation"]:
+            tmp_data = tf.keras.preprocessing.image_dataset_from_directory(
+                self.variables['data_dir'] + kwargs['sub_dir'],
+                validation_split=0.20,
+                subset=kwargs['dataset_type'],
+                label_mode="categorical",
+                seed=123,
+                image_size=kwargs['image_size'],
+                batch_size=kwargs['batch_size']
+            )
+        else:
+            tmp_data = tf.keras.preprocessing.image_dataset_from_directory(
+                self.variables['data_dir'] + kwargs['sub_dir'],
+                label_mode="categorical",
+                seed=123,
+                image_size=kwargs['image_size'],
+                batch_size=kwargs['batch_size']
+            )
         self.variables['class_names'] = tuple(tmp_data.class_names)
+        print(" class names ", self.variables['class_names'])
         self.variables['{}_size'.format(kwargs['dataset_type'])] = tmp_data.cardinality().numpy()
         tmp_data = tmp_data.unbatch().batch(kwargs['batch_size'])
-        # tmp_data = tmp_data.repeat()
+        if kwargs['dataset_type'] in ["training", "validation"]:
+            tmp_data = tmp_data.repeat()
 
         augment_data_flag = False
         if 'augment_data_flag' in kwargs:
@@ -79,17 +91,21 @@ class DatasetPipe:
         """
         stat = False
         try:
-
+            sub_dir_map = {
+                "training": '/train',
+                "validation": '/train',
+                "test": '/test',
+            }
             # split into training and validation set
-            for ds_type in ["training", "validation"]:
+            for ds_type in ["training", "validation", "test"]:
                 data = self.get_dataset(dataset_type=ds_type, image_size=kwargs['image_size'],
-                                        batch_size=kwargs['batch_size'])
+                                        batch_size=kwargs['batch_size'], sub_dir=sub_dir_map[ds_type])
                 self.dataset[ds_type] = data
 
             # split into validation and test set
-            val_batches = tf.data.experimental.cardinality(self.dataset['validation'])
-            self.dataset['test'] = self.dataset['validation'].take(val_batches // 5)
-            self.dataset['validation'] = self.dataset['validation'].skip(val_batches // 5)
+            # val_batches = tf.data.experimental.cardinality(self.dataset['validation'])
+            # self.dataset['test'] = self.dataset['validation'].take(val_batches // 5)
+            # self.dataset['validation'] = self.dataset['validation'].skip(val_batches // 5)
             stat = True
         except Exception:
             self.base_obj.write_log(log_lvl="ERROR", file_name=self.variables['log_file_path'],
