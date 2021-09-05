@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 
 from base.base_util import BaseUtil
-from api_pipeline.api_functions import CustomTrainApi
+from api_pipeline.api_functions import CustomApi
 
 
 variables = dict()
@@ -12,7 +12,7 @@ variables = dict()
 app = FastAPI()
 base_obj = BaseUtil()
 template_obj = Jinja2Templates(directory="templates")
-train_obj = CustomTrainApi()
+api_obj = CustomApi()
 
 
 class DataAPIInput(BaseModel):
@@ -27,6 +27,7 @@ class ModelTrainAPIInput(BaseModel):
 
 class ModelPredictAPIInput(BaseModel):
     image_uri: str
+    activation_layer_name: str
 
 
 @app.get("/")
@@ -76,7 +77,7 @@ async def model_train(input_dict: ModelTrainAPIInput,
     :return:
     """
     print(base_obj.variables['data_dir'])
-    bg_tasks.add_task(train_obj.run_train_api, model_name=input_dict.model_name,
+    bg_tasks.add_task(api_obj.run_train_api, model_name=input_dict.model_name,
                       fine_tune_flag=input_dict.fine_tune_flag,
                       data_dir=base_obj.variables['data_dir'])
     response = {"user_msg": "Model training initiated"}
@@ -89,7 +90,7 @@ def get_train_state():
     Function to get the training status
     :return:
     """
-    return {'train_status': train_obj.get_train_status()}
+    return {'train_status': api_obj.get_train_status()}
 
 
 @app.get("/get_evaluation_reports")
@@ -98,7 +99,7 @@ def get_evaluation_reports():
     Function to get the get_evaluation_reports
     :return:
     """
-    return {'evaluation_reports': train_obj.variables['reports']}
+    return {'evaluation_reports': api_obj.variables['reports']}
 
 
 @app.post("/model_predict")
@@ -108,7 +109,16 @@ def model_predict(input_dict: ModelPredictAPIInput):
     :param input_dict:
     :return:
     """
-    pass
+    api_obj.run_pred_api(model=api_obj.variables['model'],
+                         img_uri=input_dict.image_uri,
+                         class_names=api_obj.variables['class_names'],
+                         activation_layer_name=input_dict.activation_layer_name)
+    response = {
+        'activation_map': api_obj.activation_maps,
+        'prediction': api_obj.prediction,
+    }
+    response.update(input_dict.dict())
+    return response
 
 
 uvicorn.run(app, host="0.0.0.0", port=5000)

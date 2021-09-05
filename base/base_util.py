@@ -6,6 +6,7 @@ import os
 from kaggle.api.kaggle_api_extended import KaggleApi
 import yaml
 import datetime
+import requests
 
 
 class BaseUtil:
@@ -20,6 +21,7 @@ class BaseUtil:
             "store/data",
             "store/model",
             "store/plots",
+            "store/imgs",
             "logs",
             "logs/model_pipeline",
             "logs/utilities",

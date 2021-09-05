@@ -5,9 +5,10 @@ import numpy as np
 
 from model_pipeline.model_evaluation import ModelEvalPipe
 from model_pipeline.model_finetune import ModelPipe
+from model_pipeline.model_prediction import ModelPredictPipe
 
 
-class CustomTrainApi:
+class CustomApi:
 
     def __init__(self):
         """
@@ -16,6 +17,9 @@ class CustomTrainApi:
         self.variables = dict()
         self.variables['train_status'] = False
         self.variables['reports'] = None
+        self.base_obj = None
+        self.prediction = dict()
+        self.activation_maps = None
 
     def get_train_status(self):
         """
@@ -51,9 +55,23 @@ class CustomTrainApi:
         reports = self.get_eval_reports(**outputs)
         self.variables['reports'] = reports
         self.variables['train_status'] = True
+        self.variables['model'] = outputs['model']
+        self.variables['batch_size'] = outputs['batch_size']
+        self.variables['model_img_size'] = outputs['model_img_size']
+        self.variables['class_names'] = outputs['class_names']
 
-    @staticmethod
-    def start_train_model(**kwargs):
+    def run_pred_api(self, **kwargs):
+        """
+        Function to run the prediction api pipeline
+        :param kwargs:
+        :return:
+        """
+        pred_pipeline = ModelPredictPipe()
+        outputs = pred_pipeline.do_prediction(**kwargs)
+        self.prediction['predicted_label'] = outputs['predicted_label']
+        self.prediction['predicted_score'] = outputs['predicted_score']
+
+    def start_train_model(self, **kwargs):
         """
         Function to run the dataset pipeline and run the model training
         :return:
@@ -69,6 +87,8 @@ class CustomTrainApi:
             'test': model_pipeline.dataset_obj.dataset['test'],
             'y_true': np.concatenate([y for x, y in model_pipeline.dataset_obj.dataset['test']], axis=0),
             'batch_size': model_pipeline.variables['batch_size'],
+            'model_img_size': model_pipeline.variables['model_image_size'],
+            'class_names': model_pipeline.dataset_obj.variables['class_names']
         }
         output.update(kwargs)
         return output
