@@ -93,7 +93,7 @@ time.sleep(sleep_sec)
 print(" POST Request for prediction results ")
 api_request = {
     "image_uri": "https://www.princeton.edu/sites/default/files/styles/scale_1440/public/images/2020/05/x-ray-image-2b_full.jpg",
-    "activation_layer_name": ["dense"]
+    "activation_layer_name": []
 }
 status, resp = do_post_request(json_dict=api_request, end_point="model_predict")
 if status == 200:

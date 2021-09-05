@@ -72,6 +72,13 @@ class ModelPredictPipe:
 
         activations = keract.get_activations(kwargs['model'], predict_data, layer_names=layer_name)
 
+        import pdb; pdb.set_trace()
+
         outputs['activation_maps'] = activations
+        # import cv2
+        # img_ = cv2.imread(output_path)
+        keract.display_activations(activations, cmap=None, save=True,
+                                   directory='store/activation_maps/', data_format='channels_last',
+                                   fig_size=(24, 24), reshape_1d_layers=False)
 
         return outputs

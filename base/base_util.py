@@ -22,6 +22,7 @@ class BaseUtil:
             "store/model",
             "store/plots",
             "store/imgs",
+            "store/activation_maps",
             "logs",
             "logs/model_pipeline",
             "logs/utilities",
