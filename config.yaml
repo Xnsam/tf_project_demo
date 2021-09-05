@@ -1,5 +1,14 @@
 model_pipeline:
   model_name_map: {
+                    "MobileNetV2": "MobileNetV2",
+                    "VGG16": "VGG16"
+  }
+  model_size_map: {
+                    "MobileNetV2": 160,
+                    "VGG16": 224
+  }
+
+  model_name_map_2: {
         "efficientnetv2-s": "https://tfhub.dev/google/imagenet/efficientnet_v2_imagenet1k_s/feature_vector/2",
         "efficientnetv2-m": "https://tfhub.dev/google/imagenet/efficientnet_v2_imagenet1k_m/feature_vector/2",
         "efficientnetv2-l": "https://tfhub.dev/google/imagenet/efficientnet_v2_imagenet1k_l/feature_vector/2",
@@ -51,7 +60,7 @@ model_pipeline:
         "mobilenet_v3_large_100_224": "https://tfhub.dev/google/imagenet/mobilenet_v3_large_100_224/feature_vector/5",
         "mobilenet_v3_large_075_224": "https://tfhub.dev/google/imagenet/mobilenet_v3_large_075_224/feature_vector/5",
       }
-  model_size_map: {
+  model_size_map_2: {
           "efficientnetv2-s": 384,
           "efficientnetv2-m": 480,
           "efficientnetv2-l": 480,

@@ -26,6 +26,7 @@ class DataAPIInput(BaseModel):
 class ModelTrainAPIInput(BaseModel):
     model_name: str
     fine_tune_flag: bool
+    fine_tune_lyr: int
 
 
 class ModelPredictAPIInput(BaseModel):
@@ -81,7 +82,7 @@ async def model_train(input_dict: ModelTrainAPIInput,
     """
     print(base_obj.variables['data_dir'])
     bg_tasks.add_task(api_obj.run_train_api, model_name=input_dict.model_name,
-                      fine_tune_flag=input_dict.fine_tune_flag,
+                      fine_tune_flag=input_dict.fine_tune_flag, fine_tune_lyr=input_dict.fine_tune_lyr,
                       data_dir=base_obj.variables['data_dir'])
     response = {"user_msg": "Model training initiated"}
     return response
@@ -116,12 +117,7 @@ def model_predict(input_dict: ModelPredictAPIInput):
                          img_uri=input_dict.image_uri,
                          class_names=api_obj.variables['class_names'],
                          activation_layer_name=input_dict.activation_layer_name)
-    response = {
-        'activation_map': api_obj.activation_maps,
-        'prediction': api_obj.prediction,
-    }
-    import pdb; pdb.set_trace()
-    response.update(input_dict.dict())
+    response = api_obj.prediction
     return response
 
 

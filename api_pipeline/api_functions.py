@@ -2,16 +2,15 @@
 Python script for API functions
 """
 import numpy as np
-
 from model_pipeline.model_evaluation import ModelEvalPipe
-from model_pipeline.model_finetune import ModelPipe
+from model_pipeline.model_train import ModelPipe
 from model_pipeline.model_prediction import ModelPredictPipe
 
 
 class CustomApi:
 
     def __init__(self):
-        """
+        """8
         Function to initialize the class
         """
         self.variables = dict()
@@ -41,6 +40,7 @@ class CustomApi:
             y_true=kwargs['y_true'],
             batch_size=kwargs['batch_size']
         )
+        print("Evaluate Model True")
         return reports
 
     def run_train_api(self, **kwargs):
@@ -72,7 +72,6 @@ class CustomApi:
         outputs = pred_pipeline.do_prediction(**kwargs)
         self.prediction['predicted_label'] = outputs['predicted_label']
         self.prediction['predicted_score'] = outputs['predicted_score']
-        self.activation_maps = outputs['activation_maps']
         print('Prediction pipeline complete')
 
     @staticmethod
@@ -83,7 +82,7 @@ class CustomApi:
         """
         model_pipeline = ModelPipe(model_name=kwargs['model_name'],
                                    fine_tune_flag=kwargs['fine_tune_flag'],
-                                   data_dir=kwargs['data_dir'])
+                                   data_dir=kwargs['data_dir'], fine_tune_lyr=kwargs['fine_tune_lyr'])
 
         _ = model_pipeline.run_model_pipeline()
 

@@ -25,6 +25,7 @@ class ModelPipe:
         self.variables['log_file_path'] = 'logs/model_pipeline/model_pipeline.log'
         self.variables['model_save_path'] = 'store/model/{}'.format(self.variables['model_name'])
         self.variables['fine_tune_flag'] = kwargs['fine_tune_flag']
+        self.variables['fine_tune_lyr'] = kwargs['fine_tune_lyr']
         self.variables['model_image_size'] = tuple()
         self.variables['batch_size'] = 16
         self.variables['model'] = None
@@ -51,6 +52,19 @@ class ModelPipe:
                                     error_desc=traceback.format_exc())
         return stat, "Convert To ONNX {}".format(stat)
 
+    def get_model(self):
+        """
+        Function to get the model
+        :return:
+        """
+        base_model = None
+        if self.variables['model_name'] == 'MobileNetV2':
+            base_model = tf.keras.applications.MobileNetV2()
+        if self.variables['model_name'] == "VGG16":
+            base_model = tf.keras.applications.VGG16()
+
+        return base_model
+
     def create_model(self):
         """
         Function to create model
@@ -58,20 +72,27 @@ class ModelPipe:
         """
         stat = False
         try:
-            model = tf.keras.Sequential([
-                tf.keras.layers.InputLayer(input_shape=self.variables['model_image_size'] + (3,)),
-                tf_hub.KerasLayer(self.variables['model_uri'], trainable=self.variables['fine_tune_flag']),
-                tf.keras.layers.Dropout(rate=0.2),
-                tf.keras.layers.Dense(len(self.dataset_obj.variables['class_names']),
-                                      kernel_regularizer=tf.keras.regularizers.l2(0.001))
-            ])
+            # build the model
+            base_model = self.get_model()
+            model = tf.keras.Sequential()
 
-            model.build((None, ) + self.variables['model_image_size'] + (3,))
-            model.compile(
-                optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-                loss=tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=0.1),
-                metrics=['accuracy']
-            )
+            for layer in base_model.layers[:-1]:
+                layer.trainable = False
+                model.add(layer)
+
+            # Fine tuning the model
+            if self.variables['fine_tune_flag']:
+                assert self.variables['fine_tune_lyr'] < len(base_model.layers)
+                for layer in model.layers[-self.variables['fine_tune_lyr']:]:
+                    layer.trainable = True
+
+            model.add(tf.keras.layers.Dense(len(self.dataset_obj.variables['class_names']),
+                                            activation="softmax"))
+
+            model.compile(optimizer=tf.keras.optimizers.RMSprop(),
+                          loss=tf.keras.losses.CategoricalCrossentropy(),
+                          metrics=['accuracy'])
+
             self.variables['model'] = model
             stat = True
         except Exception:
