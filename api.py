@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, BackgroundTasks
 import uvicorn
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
-
+from fastapi.responses import FileResponse
 from base.base_util import BaseUtil
 from api_pipeline.api_functions import CustomApi
 
@@ -120,6 +120,15 @@ def model_predict(input_dict: ModelPredictAPIInput):
     response = api_obj.prediction
     response['predicted_score'] = response['predicted_score'].tolist()
     return response
+
+
+@app.get("/get_activation_maps")
+def get_activation_maps():
+    """
+    Function to return the activation maps
+    :return:
+    """
+    return FileResponse(api_obj.activation_maps)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,6 @@ import os
 from kaggle.api.kaggle_api_extended import KaggleApi
 import yaml
 import datetime
-import requests
 
 
 class BaseUtil:
@@ -41,8 +40,6 @@ class BaseUtil:
         :return:
         """
         for folder_path in self.variables['folder_paths']:
-            if not self.data_exists(folder_path):
-                folder_path = '../' + folder_path
             if not self.data_exists(folder_path):
                 os.mkdir(folder_path)
                 print('Created ' + folder_path)

@@ -86,21 +86,31 @@ else:
 #     pprint.pprint(resp)
 # else:
 #     print("GET Request for model evaluation results Failed")
-
-sleep_sec = 180
-print('Waiting {} secs ...'.format(sleep_sec))
-time.sleep(sleep_sec)
-# # # =======================================  Sample POST Request for prediction results
-print(" POST Request for prediction results ")
-api_request = {
-    "image_uri": "https://www.princeton.edu/sites/default/files/styles/scale_1440/public/images/2020/05/x-ray-image-2b_full.jpg",
-    "activation_layer_name": ["block5_conv3"]
-}
-status, resp = do_post_request(json_dict=api_request, end_point="model_predict")
-if status == 200:
-    pprint.pprint(resp)
-else:
-    print("POST Request for prediction failed")
-
+#
+# sleep_sec = 180
+# print('Waiting {} secs ...'.format(sleep_sec))
+# time.sleep(sleep_sec)
+# # # # =======================================  Sample POST Request for prediction results
+# print(" POST Request for prediction results ")
+# api_request = {
+#     "image_uri": "https://www.princeton.edu/sites/default/files/styles/scale_1440/public/images/2020/05/x-ray-image-2b_full.jpg",
+#     "activation_layer_name": ["block5_conv3"]
+# }
+# status, resp = do_post_request(json_dict=api_request, end_point="model_predict")
+# if status == 200:
+#     pprint.pprint(resp)
+# else:
+#     print("POST Request for prediction failed")
+#
+# sleep_sec = 5
+# print('Waiting {} secs ...'.format(sleep_sec))
+# time.sleep(sleep_sec)
+# # # =====================================  Sample GET activation maps
+# print(" GET Activation maps ")
+# status, resp = do_get_request(end_point="get_activation_maps")
+# if status == 200:
+#     pprint.pprint(resp)
+# else:
+#     print("GET Request for activation maps")
 
 
