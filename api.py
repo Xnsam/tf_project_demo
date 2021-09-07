@@ -128,7 +128,8 @@ def get_activation_maps():
     Function to return the activation maps
     :return:
     """
-    return FileResponse(api_obj.activation_maps)
+    file_path = 'store/activation_maps/{}'.format(api_obj.activation_maps)
+    return FileResponse(file_path, media_type="image/png")
 
 
 if __name__ == '__main__':

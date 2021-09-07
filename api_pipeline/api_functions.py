@@ -74,7 +74,7 @@ class CustomApi:
         self.prediction['predicted_score'] = outputs['predicted_score']
 
         import os
-        self.activation_maps = os.listdir('store/activation_maps')
+        self.activation_maps = os.listdir('store/activation_maps')[-1]
 
         print('Prediction pipeline complete')
 

@@ -4,3 +4,4 @@ store/*
 *.dll
 .idea/*
 logs/*
+api_2.py
