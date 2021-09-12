@@ -5,8 +5,8 @@ import os
 import traceback
 from data_layer.dataset_pipeline import DatasetPipe
 import tensorflow as tf
-import tensorflow_hub as tf_hub
-import onnxruntime as onx_rt
+# import tensorflow_hub as tf_hub
+# import onnxruntime as onx_rt
 import tf2onnx
 
 
@@ -203,8 +203,8 @@ class ModelPipe:
         try:
             if not os.path.exists(self.variables['model_save_path']):
                 os.mkdir(self.variables['model_save_path'])
-            self.variables['model_path'] = "{}/fine_tuned_model".format(self.variables['model_save_path'])
-            self.variables['model'].save_weights(self.variables['model_path'])
+            self.variables['model_path'] = "{}/fine_tuned_model.hdf5".format(self.variables['model_save_path'])
+            self.variables['model'].save(self.variables['model_path'])
             stat = True
         except Exception:
             self.base_obj.write_log(log_lvl="ERROR", error_desc=traceback.format_exc(),

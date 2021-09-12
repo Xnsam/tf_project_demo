@@ -64,9 +64,10 @@ class CustomApi:
         outputs = pred_pipeline.do_prediction(**kwargs)
         self.prediction['predicted_label'] = outputs['predicted_label']
         self.prediction['predicted_score'] = outputs['predicted_score']
+        self.prediction['validation_img'] = outputs['validation_img']
 
-        import os
-        self.activation_maps = os.listdir('store/activation_maps')[-1]
+        # import os
+        # self.activation_maps = os.listdir('store/activation_maps')[-1]
 
         print('Prediction pipeline complete')
 

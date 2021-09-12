@@ -1,9 +1,8 @@
 """
 Python script to invoke the API's
 """
-
-import requests
 import time
+import requests
 import pprint
 
 
@@ -37,80 +36,53 @@ def do_get_request(host_name="http://localhost", port_num="5000", end_point="fet
     return resp_get.status_code, resp_get.json()
 
 
-# # # =======================================  Sample POST Request for fetch data
-# print(" POST Request for fetch data ")
-# api_request = {
-#     "src": "kaggle",
-#     "data_uri": "rashikrahmanpritom/covid-wwo-pneumonia-chest-xray",
-# }
-# status, resp = do_post_request(json_dict=api_request)
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("Fetch data failed")
+def run_requests(hit_api: str):
+    """
+    Function to hit the api
+    :param hit_api:
+    :return:
+    """
+    # # # =======================================  Sample POST Request for fetch data
+    if hit_api == 'fetch_data':
+        print(" POST Request for fetch data ")
+        api_request = {
+            "src": "kaggle",
+            "data_uri": "rashikrahmanpritom/covid-wwo-pneumonia-chest-xray",
+        }
+        status, resp = do_post_request(json_dict=api_request)
+        if status == 200:
+            pprint.pprint(resp)
+        else:
+            print("Fetch data failed")
+    elif hit_api == 'train_model':
+        # # =====================================  Sample POST Request for model training
+        print(" POST Request for model training ")
+        api_request = {
+            "model_name": "VGG16",
+            "fine_tune_flag": False,
+            "fine_tune_lyr": 5
+        }
+        status, resp = do_post_request(json_dict=api_request, end_point="model_train")
+        if status == 200:
+            pprint.pprint(resp)
+        else:
+            print("POST Request for model training failed")
+    elif hit_api == 'predict_model':
+        print(" POST Request for prediction results ")
+        api_request = {
+            "image_uri": "https://www.princeton.edu/sites/default/files/styles/scale_1440/public/images/2020/05/x-ray-image-2b_full.jpg",
+            "activation_layer_name": ["block5_conv3"]
+        }
+        status, resp = do_post_request(json_dict=api_request, end_point="model_predict")
+        if status == 200:
+            pprint.pprint(resp)
+        else:
+            print("POST Request for prediction failed")
 
-# sleep_sec = 5
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # =====================================  Sample POST Request for model training
-print(" POST Request for model training ")
-api_request = {
-    "model_name": "VGG16",
-    "fine_tune_flag": False,
-    "fine_tune_lyr": 5
-}
-status, resp = do_post_request(json_dict=api_request, end_point="model_train")
-if status == 200:
-    pprint.pprint(resp)
-else:
-    print("POST Request for model training failed")
 
-# sleep_sec = 180
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # =====================================  Sample GET Request for model training status
-# print(" GET Request for model training status ")
-# status, resp = do_get_request(end_point="get_train_state")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("GET Request for model training status Failed")
-#
-# sleep_sec = 5
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # # =====================================  Sample GET Request for evaluation results
-# print(" GET Request for evaluation results ")
-# status, resp = do_get_request(end_point="get_evaluation_reports")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("GET Request for model evaluation results Failed")
-#
-# sleep_sec = 180
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # # =======================================  Sample POST Request for prediction results
-# print(" POST Request for prediction results ")
-# api_request = {
-#     "image_uri": "https://www.princeton.edu/sites/default/files/styles/scale_1440/public/images/2020/05/x-ray-image-2b_full.jpg",
-#     "activation_layer_name": ["block5_conv3"]
-# }
-# status, resp = do_post_request(json_dict=api_request, end_point="model_predict")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("POST Request for prediction failed")
-
-# sleep_sec = 5
-# print('Waiting {} secs ...'.format(sleep_sec))
-# time.sleep(sleep_sec)
-# # # =====================================  Sample GET activation maps
-# print(" GET Activation maps ")
-# status, resp = do_get_request(end_point="get_activation_maps")
-# if status == 200:
-#     pprint.pprint(resp)
-# else:
-#     print("GET Request for activation maps")
+run_requests(hit_api="fetch_data")
+run_requests(hit_api="train_model")
+time.sleep(120)
+run_requests(hit_api="predict_model")
 
 

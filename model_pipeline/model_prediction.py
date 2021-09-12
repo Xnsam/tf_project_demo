@@ -5,6 +5,7 @@ import tensorflow as tf
 import numpy as np
 import keract
 import os
+from tf_explain.core.grad_cam import GradCAM
 
 
 class ModelPredictPipe:
@@ -29,6 +30,52 @@ class ModelPredictPipe:
             with open(output_path, 'wb') as f:
                 f.write(download_img.content)
 
+    # @staticmethod
+    # def get_activation_maps(**kwargs):
+    #     """
+    #     Function to extract the activation map
+    #     :return:
+    #     """
+    #     import pdb; pdb.set_trace()
+    #     # new approach
+    #     explainer = GradCAM()
+    #     img_inp = tf.keras.preprocessing.image.load_img(kwargs['img_path'], target_size=kwargs['img_size'])
+    #     img_inp = tf.keras.preprocessing.image.img_to_array(img_inp)
+    #     grid = explainer.explain(validation_data=([img_inp], None), model=kwargs['model'], layer_name='block5_conv3', class_index=1)
+    #
+    #     grid = explainer.explain(validation_data=([img_inp], None), model=kwargs['model'], layer_name=kwargs['layer_name'][0], class_index=1)
+    #
+    #     import matplotlib.cm as cm
+    #
+    #     grid = np.uint8(255 * grid)
+    #     jet = cm.get_cmap('jet')
+    #     jet_colors = jet(np.arange(256))[:, :3]
+    #     jet_heatmap = jet_colors[grid]
+    #
+    #     jet_heatmap = tf.keras.preprocessing.image.array_to_img(jet_heatmap)
+    #     jet_heatmap = jet_heatmap.resize((img_inp.shape[1], img_inp.shape[0]))
+    #     jet_heatmap = tf.keras.preprocessing.image.img_to_array(jet_heatmap)
+    #
+    #     superimposed_img = jet_heatmap * kwargs['alpha'] + img_inp
+    #     superimposed_img = tf.keras.image.array_to_img(superimposed_img)
+    #
+    #     superimposed_img.save(kwargs['output_path'])
+
+        # older approach
+        # from tf_explain.core.grad_cam import GradCAM
+        # explainer = GradCAM()
+        # img_ = tf.keras.preprocessing.image.load_img(output_path, target_size=kwargs['model_img_size'])
+        # img_array_ = tf.keras.preprocessing.image.img_to_array(img_)
+        # import pdb; pdb.set_trace()
+        # tmp_data = ([img_array_], None)
+        # grid = explainer.explain(tmp_data, kwargs['model'], class_index=np.argmax(score))
+        #
+        # activations = keract.get_activations(kwargs['model'], predict_data, layer_names=layer_name)
+        # keract.display_activations(activations, save=True, directory='store/activation_maps/',
+        # data_format='channels_last')
+        # return superimposed_img
+
+
     @staticmethod
     def get_preprocess_model():
         """
@@ -45,39 +92,39 @@ class ModelPredictPipe:
         :param kwargs:
         :return:
         """
-        output_path = 'store/imgs/predict_img.png'
+        img_path = 'store/imgs/predict_img.png'
 
-        self.download_file(kwargs['img_uri'], output_path)
+        model = tf.keras.models.load_model(kwargs['model_path'])
+        self.download_file(kwargs['img_uri'], img_path)
 
         # preprocess image
-
-        img = tf.keras.preprocessing.image.load_img(output_path, target_size=kwargs['model_img_size'])
+        img = tf.keras.preprocessing.image.load_img(img_path, target_size=kwargs['model_img_size'])
         img_array = tf.keras.preprocessing.image.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
 
+        # predict on results
         preprocess_model = self.get_preprocess_model()
         predict_data = preprocess_model(img_array)
-        predictions = kwargs['model'].predict(predict_data)
+        predictions = model.predict(predict_data)
         score = predictions[0]
 
-        outputs = {
-            'predicted_label': kwargs['class_names'][np.argmax(score)],
-            'predicted_score': score
-        }
+        # use grad cam for validation image
+        explainer = GradCAM()
+        img_inp = tf.keras.preprocessing.image.load_img(img_path, target_size=kwargs['model_img_size'])
+        img_inp = tf.keras.preprocessing.image.img_to_array(img_inp)
+        grid = explainer.explain(validation_data=([img_inp], None), model=model,
+                                 layer_name=kwargs['activation_layer_name'][0],
+                                 class_index=np.argmax(score))
+        alpha = 0.3
+        validation_img = grid * alpha + img_inp
+        validation_img = tf.keras.preprocessing.image.array_to_img(validation_img)
 
-        if len(kwargs['activation_layer_name']) == 0:
-            layer_name = None
-        else:
-            layer_name = kwargs['activation_layer_name']
+        output_path = 'store/activation_maps/{}_gradcam.png'.format(
+            kwargs['activation_layer_name'][0]
+        )
+        validation_img.save(output_path)
 
-        # from tf_explain.core.grad_cam import GradCAM
-        # explainer = GradCAM()
-        # img_ = tf.keras.preprocessing.image.load_img(output_path, target_size=kwargs['model_img_size'])
-        # img_array_ = tf.keras.preprocessing.image.img_to_array(img_)
-        # tmp_data = ([img_array_], None)
-        # grid = explainer.explain(tmp_data, kwargs['model'], class_index=np.argmax(score))
-
-        activations = keract.get_activations(kwargs['model'], predict_data, layer_names=layer_name)
-        keract.display_activations(activations, save=True, directory='store/activation_maps/', data_format='channels_last')
+        outputs = {'predicted_label': kwargs['class_names'][np.argmax(score)], 'predicted_score': score,
+                   'validation_img': output_path}
 
         return outputs

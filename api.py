@@ -99,23 +99,16 @@ def model_predict(input_dict: ModelPredictAPIInput):
     :param input_dict:
     :return:
     """
-    api_obj.run_pred_api(model=api_obj.variables['model'],
+    api_obj.run_pred_api(model_path='D:/projects/tf_demo/tf_project_demo/store/model/VGG16/fine_tuned_model.hdf5',
                          img_uri=input_dict.image_uri,
                          class_names=api_obj.variables['class_names'],
                          activation_layer_name=input_dict.activation_layer_name)
     response = api_obj.prediction
     response['predicted_score'] = response['predicted_score'].tolist()
-    return response
+    output_path = response['validation_img']
+    del response['validation_img']
 
-
-@app.get("/get_activation_maps")
-def get_activation_maps():
-    """
-    Function to return the activation maps
-    :return:
-    """
-    file_path = 'store/activation_maps/{}'.format(api_obj.activation_maps)
-    return FileResponse(file_path, media_type="image/png")
+    return FileResponse(output_path), response
 
 
 if __name__ == '__main__':
