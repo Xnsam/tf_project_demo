@@ -62,6 +62,8 @@ class ModelPipe:
             base_model = tf.keras.applications.MobileNetV2()
         if self.variables['model_name'] == "VGG16":
             base_model = tf.keras.applications.VGG16()
+        if self.variables['model_name'] == "Xception":
+            base_model = tf.keras.applications.Xception()
 
         return base_model
 
@@ -161,10 +163,9 @@ class ModelPipe:
 
         # load the dataset
         if stat:
-            print(reason)
             stat, reason = self.dataset_obj.run_dataset_pipeline(
                 image_size=self.variables['model_image_size'], batch_size=self.variables['batch_size'],
-                augment_data_flag=False
+                augment_data_flag=False, model_name=self.variables['model_name']
             )
 
         # create custom model

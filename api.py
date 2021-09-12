@@ -72,38 +72,24 @@ def data_api(input_dict: DataAPIInput):
 
 
 @app.post("/model_train")
-async def model_train(input_dict: ModelTrainAPIInput,
-                      bg_tasks: BackgroundTasks):
+def model_train(input_dict: ModelTrainAPIInput, bg_tasks: BackgroundTasks):
     """
     API to train the given model
     :param bg_tasks:
     :param input_dict:
     :return:
     """
-    print(base_obj.variables['data_dir'])
-    bg_tasks.add_task(api_obj.run_train_api, model_name=input_dict.model_name,
-                      fine_tune_flag=input_dict.fine_tune_flag, fine_tune_lyr=input_dict.fine_tune_lyr,
-                      data_dir=base_obj.variables['data_dir'])
-    response = {"user_msg": "Model training initiated"}
+    if api_obj.variables['train_status'] is False:
+        bg_tasks.add_task(api_obj.run_train_api, model_name=input_dict.model_name,
+                          fine_tune_flag=input_dict.fine_tune_flag, fine_tune_lyr=input_dict.fine_tune_lyr,
+                          data_dir=base_obj.variables['data_dir'])
+        response = {"user_msg": "Model training initiated"}
+    elif api_obj.variables['train_status'] == 'IP':
+        response = {"user_msg": "Model training in progress"}
+    else:
+        response = {'evaluation_reports': api_obj.variables['reports'],
+                    "user_msg": 'Model training complete'}
     return response
-
-
-@app.get("/get_train_state")
-def get_train_state():
-    """
-    Function to get the training status
-    :return:
-    """
-    return {'train_status': api_obj.get_train_status()}
-
-
-@app.get("/get_evaluation_reports")
-def get_evaluation_reports():
-    """
-    Function to get the get_evaluation_reports
-    :return:
-    """
-    return {'evaluation_reports': api_obj.variables['reports']}
 
 
 @app.post("/model_predict")

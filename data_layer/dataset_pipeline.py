@@ -26,17 +26,24 @@ class DatasetPipe:
         :param kwargs: augment_data_flag: boolean: Flag for considering data augmentation
         :return: tf.keras.Sequential Model
         """
-        normalization_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1/255)
-        preprocessing_model = tf.keras.Sequential([normalization_layer])
 
-        if kwargs['augment_data_flag']:
-            preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomRotation(30))
-            preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomTranslation(0, 0.2))
-            preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomTranslation(0.2, 0))
-            preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomZoom(0.2, 0.2))
-            preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomFlip(mode='horizontal'))
+        if kwargs['model_name'] == 'Xception':
+            preprocess_input = tf.keras.applications.xception.preprocess_input
+        if kwargs['model_name'] == 'MobileNetV2':
+            preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
+        if kwargs['model_name'] == 'VGG16':
+            preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
-        return preprocessing_model
+        # preprocessing_model = tf.keras.Sequential([preprocess_input])
+        #
+        # if kwargs['augment_data_flag']:
+        #     preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomRotation(30))
+        #     preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomTranslation(0, 0.2))
+        #     preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomTranslation(0.2, 0))
+        #     preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomZoom(0.2, 0.2))
+        #     preprocessing_model.add(tf.keras.layers.experimental.preprocessing.RandomFlip(mode='horizontal'))
+
+        return preprocess_input
 
     def get_dataset(self, **kwargs):
         """
@@ -76,7 +83,8 @@ class DatasetPipe:
         if 'augment_data_flag' in kwargs:
             augment_data_flag = kwargs['augment_data_flag']
 
-        preprocessing_model = self.get_preprocessing_model(augment_data_flag=augment_data_flag)
+        preprocessing_model = self.get_preprocessing_model(augment_data_flag=augment_data_flag,
+                                                           model_name=kwargs['model_name'])
         tmp_data = tmp_data.map(lambda images, labels: (preprocessing_model(images), labels))
 
         return tmp_data
@@ -84,9 +92,10 @@ class DatasetPipe:
     def run_dataset_pipeline(self, **kwargs):
         """
         Function to run the build dataset pipeline
-        :param kwargs: image_size:
-        :param kwargs: batch_size:
+        :param kwargs: image_size: tuple
+        :param kwargs: batch_size: int
         :param kwargs: augment_data_flag: boolean
+        :param kwargs: model_name: str
         :return: status: boolean
         """
         stat = False
@@ -99,13 +108,11 @@ class DatasetPipe:
             # split into training and validation set
             for ds_type in ["training", "validation", "test"]:
                 data = self.get_dataset(dataset_type=ds_type, image_size=kwargs['image_size'],
-                                        batch_size=kwargs['batch_size'], sub_dir=sub_dir_map[ds_type])
+                                        batch_size=kwargs['batch_size'],
+                                        model_name=kwargs['model_name'],
+                                        sub_dir=sub_dir_map[ds_type])
                 self.dataset[ds_type] = data
 
-            # split into validation and test set
-            # val_batches = tf.data.experimental.cardinality(self.dataset['validation'])
-            # self.dataset['test'] = self.dataset['validation'].take(val_batches // 5)
-            # self.dataset['validation'] = self.dataset['validation'].skip(val_batches // 5)
             stat = True
         except Exception:
             self.base_obj.write_log(log_lvl="ERROR", file_name=self.variables['log_file_path'],

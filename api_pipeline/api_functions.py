@@ -20,13 +20,6 @@ class CustomApi:
         self.prediction = dict()
         self.activation_maps = None
 
-    def get_train_status(self):
-        """
-        Function to get the train status
-        :return:
-        """
-        return self.variables['train_status']
-
     @staticmethod
     def get_eval_reports(**kwargs):
         """
@@ -49,9 +42,8 @@ class CustomApi:
         :param kwargs:
         :return:
         """
+        self.variables['train_status'] = 'IP'
         outputs = self.start_train_model(**kwargs)
-        import gc
-        gc.collect()
         reports = self.get_eval_reports(**outputs)
         self.variables['reports'] = reports
         self.variables['train_status'] = True
@@ -84,6 +76,7 @@ class CustomApi:
         Function to run the dataset pipeline and run the model training
         :return:
         """
+
         model_pipeline = ModelPipe(model_name=kwargs['model_name'],
                                    fine_tune_flag=kwargs['fine_tune_flag'],
                                    data_dir=kwargs['data_dir'], fine_tune_lyr=kwargs['fine_tune_lyr'])

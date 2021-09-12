@@ -1,11 +1,13 @@
 model_pipeline:
   model_name_map: {
                     "MobileNetV2": "MobileNetV2",
-                    "VGG16": "VGG16"
+                    "VGG16": "VGG16",
+                    "Xception": "Xception"
   }
   model_size_map: {
                     "MobileNetV2": 160,
-                    "VGG16": 224
+                    "VGG16": 224,
+                    "Xception": 299
   }
 
   model_name_map_2: {
